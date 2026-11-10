@@ -1,0 +1,15 @@
+flowchart TB
+    EVT["record.confirmed"] --> LOAD["Load windowed history"]
+    LOAD --> MIN{"Min support met?"}
+    MIN -->|no| SKIP["No pattern reported"]
+    MIN -->|yes| A["Cycle-day alignment<br/>symptom vs cycle day"]
+    MIN --> B["Lagged correlation<br/>sleep vs fatigue"]
+    MIN --> C["Association rules<br/>symptom co-occurrence"]
+    MIN --> D["Day clustering<br/>wellness profiles"]
+    A --> FDR["Multiple-testing correction"]
+    B --> FDR
+    C --> FDR
+    D --> FDR
+    FDR --> OBS["pattern_observations<br/>+ evidence_record_ids"]
+    OBS --> API["GET /patterns, /patterns/id/evidence"]
+    OBS --> KG["Knowledge graph upsert"]

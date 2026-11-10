@@ -1,0 +1,14 @@
+flowchart TB
+    NL["Natural-language schedule<br/>college 9-4, dance 6pm"] --> PRS["Schedule parser<br/>LLM to JSON time blocks"]
+    PRS --> CONF["User confirms parsed blocks"]
+    CONF --> SB[("schedule_blocks")]
+    CTX["Recent sleep, mood, activity<br/>+ preferences from memory"] --> CAND["Candidate activities<br/>rule library"]
+    SB --> SLOT["Constraint-based slot filler<br/>deterministic"]
+    CAND --> SLOT
+    SLOT --> PLN[("daily_plans + plan_items")]
+    PLN --> UI["Plan screen"]
+    UI -->|done / skip / reject / edit| FB[("plan_feedback")]
+    FB --> PREF["Preference learning<br/>weights per activity"]
+    PREF --> CAND
+    NEWD["New data or schedule change"] --> ADAPT["Re-plan remaining day"]
+    ADAPT --> SLOT

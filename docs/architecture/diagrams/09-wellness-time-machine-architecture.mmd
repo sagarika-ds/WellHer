@@ -1,0 +1,14 @@
+flowchart LR
+    M["Mobile: range picker<br/>1m / 3m / 6m / 1y"] --> API["GET /timemachine"]
+    API --> AGG["Aggregation service<br/>SQL + Pandas"]
+    AGG --> TL[("timeline_events")]
+    AGG --> CMP["Period comparison<br/>A vs B"]
+    AGG --> REC["Recurring observations<br/>from pattern_observations"]
+    CMP --> FACT["Computed fact table"]
+    REC --> FACT
+    FACT --> TPL["Summary templates<br/>numbers injected"]
+    TPL --> OPT["Optional LLM polish<br/>numbers fixed, via egress gate"]
+    OPT --> SUM["Summary text"]
+    TPL --> SUM
+    API --> DAY["GET /timemachine/day/date"]
+    DAY --> TL

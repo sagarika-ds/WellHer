@@ -1,0 +1,34 @@
+flowchart TB
+    APP["Mobile App<br/>React Native + Expo + TypeScript"]
+    NGX["Nginx<br/>TLS + rate limit"]
+    subgraph CORE["Core Backend - FastAPI modular monolith"]
+        API["REST API v1"]
+        SVC["Services + Repositories"]
+        BUS["Event bus + ARQ worker"]
+        GATE["Egress gate"]
+    end
+    subgraph ML["ML Engine - FastAPI"]
+        CYC["Cycle / Risk / Twin"]
+        PAT["Patterns / Deviation"]
+        NLP["NLP / RAG / Evidence"]
+        SPE["STT / TTS"]
+    end
+    PG[("PostgreSQL")]
+    RD[("Redis")]
+    QD[("Qdrant")]
+    S3[("S3 / MinIO")]
+    MLF["MLflow registry"]
+    LLM["LLM (local default)"]
+    MON["Prometheus + Grafana"]
+    APP -->|HTTPS JWT| NGX --> API
+    API --> SVC --> PG
+    SVC --> RD
+    SVC --> S3
+    SVC --> BUS
+    SVC -->|internal REST + service token| ML
+    NLP --> QD
+    ML --> MLF
+    NLP --> GATE
+    GATE --> LLM
+    CORE --> MON
+    ML --> MON

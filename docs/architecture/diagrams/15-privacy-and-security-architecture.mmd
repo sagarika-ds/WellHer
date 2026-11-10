@@ -1,0 +1,14 @@
+flowchart TB
+    CL["Client"] -->|TLS| EDGE["Nginx"]
+    EDGE --> AUTHN["Authentication<br/>JWT access + rotating refresh"]
+    AUTHN --> AUTHZ["Authorization<br/>RBAC + ownership checks"]
+    AUTHZ --> CONS["Consent check per purpose"]
+    CONS --> SVC["Service layer"]
+    SVC --> ENC["Field encryption<br/>AES-GCM envelope keys"]
+    ENC --> DB[("PostgreSQL<br/>encrypted at rest")]
+    SVC --> AUD["Append-only audit log"]
+    SVC --> EG{"Egress gate"}
+    EG -->|consent + allowlist ok| EXT["External or local LLM"]
+    EG -->|otherwise| BLK["Blocked + logged"]
+    SVC --> EXP["Export / erasure jobs"]
+    SVC --> ACC["Access history view"]

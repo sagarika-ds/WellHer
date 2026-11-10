@@ -1,0 +1,14 @@
+flowchart LR
+    SEL["User selects period + sections"] --> PRV["POST /reports/preview"]
+    PRV --> COL["Collector<br/>reads confirmed records only"]
+    COL --> CHT["Charts<br/>matplotlib to PNG"]
+    COL --> QST["Suggested questions<br/>template library"]
+    CHT --> ASM["Report assembler"]
+    QST --> ASM
+    ASM --> PREV["Preview JSON/HTML"]
+    PREV --> EDT["User edits notes + questions"]
+    EDT --> GEN["POST /reports/id/generate<br/>ReportLab PDF"]
+    GEN --> CHK["Content check<br/>no diagnostic phrases"]
+    CHK --> S3[("S3 / MinIO<br/>encrypted")]
+    S3 --> DL["Download"]
+    S3 --> SHR["Share link<br/>expiring token + revoke"]

@@ -1,0 +1,17 @@
+flowchart TB
+    subgraph DEV["On the phone"]
+        HK["Apple HealthKit"]
+        HC["Android Health Connect"]
+        PERM["User grants per-metric permission"]
+    end
+    PERM --> HK
+    PERM --> HC
+    HK --> RD["Read on device"]
+    HC --> RD
+    RD --> NRM["Normalize<br/>units, UTC time, metric codes"]
+    NRM --> UP["POST /wearables/import (batch)"]
+    UP --> VAL["Validate + dedupe hash"]
+    VAL --> IM[("imported_measurements<br/>source_app, source_device")]
+    IM --> TLE["timeline_events"]
+    TLE --> UNI["Unified analytics<br/>with manual records"]
+    DIS["DELETE /wearables/id"] --> REV["Revoke + stop sync<br/>optional purge"]

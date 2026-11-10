@@ -1,0 +1,12 @@
+flowchart TB
+    SRC["Sources: symptom_logs, cycle_records,<br/>lifestyle, mood, pattern_observations,<br/>anomaly_events, recommendations"] --> UPS["Graph upsert handler<br/>event-driven"]
+    UPS --> ENT[("kg_entities<br/>type, ref_table, ref_id")]
+    UPS --> EDG[("kg_edges<br/>relation, weight, evidence_ids,<br/>explanation_key")]
+    GR["GraphRepository interface"] --> PGI["Postgres implementation<br/>recursive CTEs"]
+    GR -.optional later.-> N4["Neo4j implementation"]
+    PGI --> ENT
+    PGI --> EDG
+    API["GET /graph/subgraph"] --> GR
+    CHATCTX["Chat context builder"] --> GR
+    API --> VIS["Mobile graph view"]
+    EDG --> EXP["Explanation: why this edge exists<br/>+ underlying records"]

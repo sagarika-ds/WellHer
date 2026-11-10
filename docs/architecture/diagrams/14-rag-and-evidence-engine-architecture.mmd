@@ -1,0 +1,18 @@
+flowchart TB
+    subgraph OFFLINE["Offline ingestion"]
+        DOC["Fetched documents<br/>WHO, NHS, govt, institutions"] --> MAN["manifest.json<br/>url, org, retrieved_at, license"]
+        DOC --> CHK["Chunk + checksum"]
+        CHK --> EMB["Sentence Transformers"]
+        EMB --> QD[("Qdrant")]
+        MAN --> ES[("evidence_sources")]
+    end
+    Q["User question"] --> SAFE["Safety + scope check"]
+    SAFE -->|urgent| FIXED["Fixed safety message"]
+    SAFE --> RET["Retrieve top-k chunks"]
+    RET --> QD
+    PERS["Personal context<br/>allowlisted observations"] --> PRM["Prompt builder<br/>answer only from context"]
+    RET --> PRM
+    PRM --> GATE["Egress gate"] --> LLM["LLM"]
+    LLM --> TAG["Segment tagger"]
+    TAG --> OUT["Segments with type + sources"]
+    OUT --> VER["Citation verifier<br/>every cited id exists"]

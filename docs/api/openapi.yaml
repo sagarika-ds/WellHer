@@ -1,0 +1,3060 @@
+openapi: 3.0.3
+info:
+  title: Women's Wellness Core API
+  version: 0.1.0-design
+  description: Design-stage contract generated from tools/gen_docs/api_spec.py. Not yet implemented.
+servers:
+- url: /api/v1
+paths:
+  /auth/register:
+    post:
+      tags:
+      - Auth
+      summary: Create account and record initial consents
+      operationId: post_auth_register
+      responses:
+        default: &id001
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+  /auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Log in
+      operationId: post_auth_login
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+  /auth/refresh:
+    post:
+      tags:
+      - Auth
+      summary: Rotate refresh token
+      operationId: post_auth_refresh
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+  /auth/logout:
+    post:
+      tags:
+      - Auth
+      summary: Revoke current session
+      operationId: post_auth_logout
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+  /auth/forgot-password:
+    post:
+      tags:
+      - Auth
+      summary: Send reset email (always 202)
+      operationId: post_auth_forgot_password
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+  /auth/reset-password:
+    post:
+      tags:
+      - Auth
+      summary: Reset password with token
+      operationId: post_auth_reset_password
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+  /auth/me:
+    get:
+      tags:
+      - Auth
+      summary: Current user
+      operationId: get_auth_me
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+      security:
+      - bearerAuth: []
+  /profile:
+    get:
+      tags:
+      - Profile
+      summary: Get health profile
+      operationId: get_profile
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileOut'
+      security:
+      - bearerAuth: []
+    put:
+      tags:
+      - Profile
+      summary: Update health profile
+      operationId: put_profile
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileIn'
+  /consents:
+    get:
+      tags:
+      - Consent
+      summary: List consents
+      operationId: get_consents
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsentOut'
+      security:
+      - bearerAuth: []
+  /consents/{purpose}:
+    put:
+      tags:
+      - Consent
+      summary: Grant or revoke a consent
+      operationId: put_consents_purpose
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentSet'
+      parameters:
+      - name: purpose
+        in: path
+        required: true
+        schema:
+          type: string
+  /cycles:
+    get:
+      tags:
+      - Cycles
+      summary: List cycles
+      operationId: get_cycles
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CycleOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+    post:
+      tags:
+      - Cycles
+      summary: Log a cycle
+      operationId: post_cycles
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CycleIn'
+  /cycles/{id}:
+    put:
+      tags:
+      - Cycles
+      summary: Update a cycle
+      operationId: put_cycles_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CycleIn'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+      - Cycles
+      summary: Delete a cycle
+      operationId: delete_cycles_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /cycles/stats:
+    get:
+      tags:
+      - Cycles
+      summary: Cycle statistics
+      operationId: get_cycles_stats
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleStats'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+  /symptoms:
+    get:
+      tags:
+      - Symptoms
+      summary: List symptom logs
+      operationId: get_symptoms
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SymptomOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+    post:
+      tags:
+      - Symptoms
+      summary: Log a symptom manually
+      operationId: post_symptoms
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SymptomOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SymptomIn'
+  /symptoms/{id}:
+    delete:
+      tags:
+      - Symptoms
+      summary: Delete symptom log
+      operationId: delete_symptoms_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /lifestyle:
+    get:
+      tags:
+      - Lifestyle
+      summary: List daily entries
+      operationId: get_lifestyle
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LifestyleOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+    post:
+      tags:
+      - Lifestyle
+      summary: Create daily entry
+      operationId: post_lifestyle
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifestyleOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LifestyleIn'
+  /lifestyle/{id}:
+    put:
+      tags:
+      - Lifestyle
+      summary: Update daily entry
+      operationId: put_lifestyle_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifestyleOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LifestyleIn'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /lifestyle/summary:
+    get:
+      tags:
+      - Lifestyle
+      summary: Summary over a period
+      operationId: get_lifestyle_summary
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifestyleSummary'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+  /mood:
+    get:
+      tags:
+      - Mood
+      summary: List mood entries
+      operationId: get_mood
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MoodOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+    post:
+      tags:
+      - Mood
+      summary: Log mood
+      operationId: post_mood
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoodOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoodIn'
+  /predictions/cycle/next:
+    get:
+      tags:
+      - Predictions
+      summary: Next period prediction with interval
+      operationId: get_predictions_cycle_next
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CyclePrediction'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `ml_processing`.
+  /predictions/{id}/explanation:
+    get:
+      tags:
+      - Predictions
+      summary: Explanation of a prediction
+      operationId: get_predictions_id_explanation
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Explanation'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `ml_processing`.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /insights/risk:
+    get:
+      tags:
+      - Insights
+      summary: Awareness-level pattern category (not a diagnosis)
+      operationId: get_insights_risk
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskInsight'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `ml_processing`.
+  /recommendations:
+    get:
+      tags:
+      - Recommendations
+      summary: List recommendations
+      operationId: get_recommendations
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecommendationOut'
+      security:
+      - bearerAuth: []
+  /recommendations/{id}/feedback:
+    post:
+      tags:
+      - Recommendations
+      summary: Record feedback
+      operationId: post_recommendations_id_feedback
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendationFeedback'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /chat/sessions:
+    post:
+      tags:
+      - Chat
+      summary: Start chat session
+      operationId: post_chat_sessions
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSessionOut'
+      security:
+      - bearerAuth: []
+    get:
+      tags:
+      - Chat
+      summary: List sessions
+      operationId: get_chat_sessions
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatSessionOut'
+      security:
+      - bearerAuth: []
+  /chat/sessions/{id}/messages:
+    post:
+      tags:
+      - Chat
+      summary: Send a message; evidence-tagged reply
+      operationId: post_chat_sessions_id_messages
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatReply'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessageIn'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /chat/sessions/{id}:
+    delete:
+      tags:
+      - Chat
+      summary: Delete session and messages
+      operationId: delete_chat_sessions_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /voice/query:
+    post:
+      tags:
+      - Voice
+      summary: Audio upload -> transcript + reply (+audio)
+      operationId: post_voice_query
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoiceReply'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationTurnIn'
+  /notifications:
+    get:
+      tags:
+      - Notifications
+      summary: List notifications
+      operationId: get_notifications
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationOut'
+      security:
+      - bearerAuth: []
+  /notifications/preferences:
+    put:
+      tags:
+      - Notifications
+      summary: Update preferences
+      operationId: put_notifications_preferences
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationPrefs'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationPrefs'
+  /notifications/device-token:
+    post:
+      tags:
+      - Notifications
+      summary: Register push token
+      operationId: post_notifications_device_token
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceToken'
+  /dashboard:
+    get:
+      tags:
+      - Dashboard
+      summary: Home overview
+      operationId: get_dashboard
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+      security:
+      - bearerAuth: []
+  /conversation/turn:
+    post:
+      tags:
+      - Detective
+      summary: One conversational turn (text or audio)
+      operationId: post_conversation_turn
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationTurnOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationTurnIn'
+  /conversation/drafts/{id}:
+    get:
+      tags:
+      - Detective
+      summary: Get draft
+      operationId: get_conversation_drafts_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftOut'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+    put:
+      tags:
+      - Detective
+      summary: Edit draft before confirming
+      operationId: put_conversation_drafts_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DraftEdit'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /conversation/drafts/{id}/confirm:
+    post:
+      tags:
+      - Detective
+      summary: Confirm and save (only way to persist)
+      operationId: post_conversation_drafts_id_confirm
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DraftConfirmOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `health_tracking`.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /conversation/drafts/{id}/discard:
+    post:
+      tags:
+      - Detective
+      summary: Discard draft
+      operationId: post_conversation_drafts_id_discard
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /twin:
+    get:
+      tags:
+      - Twin
+      summary: Digital twin status and baselines
+      operationId: get_twin
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TwinOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `ml_processing`.
+  /twin/simulate:
+    post:
+      tags:
+      - Twin
+      summary: Run a hypothetical what-if
+      operationId: post_twin_simulate
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimulateOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `ml_processing`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimulateIn'
+  /twin/simulations:
+    get:
+      tags:
+      - Twin
+      summary: Past scenarios
+      operationId: get_twin_simulations
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SimulateOut'
+      security:
+      - bearerAuth: []
+  /patterns:
+    get:
+      tags:
+      - Patterns
+      summary: List detected patterns
+      operationId: get_patterns
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatternOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `ml_processing`.
+  /patterns/{id}/evidence:
+    get:
+      tags:
+      - Patterns
+      summary: Underlying records of a pattern
+      operationId: get_patterns_id_evidence
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatternEvidence'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /patterns/heatmap:
+    get:
+      tags:
+      - Patterns
+      summary: Heatmap for a metric
+      operationId: get_patterns_heatmap
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Heatmap'
+      security:
+      - bearerAuth: []
+  /deviations:
+    get:
+      tags:
+      - Deviations
+      summary: List deviations from personal baseline
+      operationId: get_deviations
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviationOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `ml_processing`.
+  /deviations/{id}:
+    get:
+      tags:
+      - Deviations
+      summary: Deviation detail with records
+      operationId: get_deviations_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviationDetail'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /deviations/{id}/dismiss:
+    post:
+      tags:
+      - Deviations
+      summary: Dismiss
+      operationId: post_deviations_id_dismiss
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /timemachine:
+    get:
+      tags:
+      - TimeMachine
+      summary: Timeline for 1m/3m/6m/1y
+      operationId: get_timemachine
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeMachineOut'
+      security:
+      - bearerAuth: []
+  /timemachine/compare:
+    get:
+      tags:
+      - TimeMachine
+      summary: Compare two periods
+      operationId: get_timemachine_compare
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareOut'
+      security:
+      - bearerAuth: []
+  /timemachine/day/{date}:
+    get:
+      tags:
+      - TimeMachine
+      summary: All records for a date
+      operationId: get_timemachine_day_date
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DayOut'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: date
+        in: path
+        required: true
+        schema:
+          type: string
+  /timemachine/summary:
+    get:
+      tags:
+      - TimeMachine
+      summary: Summary generated from records
+      operationId: get_timemachine_summary
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SummaryOut'
+      security:
+      - bearerAuth: []
+  /wearables/connect:
+    post:
+      tags:
+      - Wearables
+      summary: Register an integration
+      operationId: post_wearables_connect
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WearableOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WearableConnectIn'
+  /wearables/{id}:
+    delete:
+      tags:
+      - Wearables
+      summary: Disconnect (optional purge)
+      operationId: delete_wearables_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /wearables/import:
+    post:
+      tags:
+      - Wearables
+      summary: Batch import of normalized measurements
+      operationId: post_wearables_import
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportBatchOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportBatchIn'
+  /wearables/measurements:
+    get:
+      tags:
+      - Wearables
+      summary: List imported measurements with source
+      operationId: get_wearables_measurements
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MeasurementOut'
+      security:
+      - bearerAuth: []
+  /analytics/unified:
+    get:
+      tags:
+      - Wearables
+      summary: Unified manual + imported analytics
+      operationId: get_analytics_unified
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnifiedAnalytics'
+      security:
+      - bearerAuth: []
+  /planner/schedule/parse:
+    post:
+      tags:
+      - Planner
+      summary: Parse natural-language schedule
+      operationId: post_planner_schedule_parse
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleParseOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleParseIn'
+  /planner/plans/generate:
+    post:
+      tags:
+      - Planner
+      summary: Generate a daily plan
+      operationId: post_planner_plans_generate
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanGenerateIn'
+  /planner/items/{id}:
+    patch:
+      tags:
+      - Planner
+      summary: Mark done / skip / reject / edit
+      operationId: patch_planner_items_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanItemOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanItemPatch'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /planner/plans/{id}/adapt:
+    post:
+      tags:
+      - Planner
+      summary: Re-plan after change
+      operationId: post_planner_plans_id_adapt
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlanAdaptIn'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /planner/progress:
+    get:
+      tags:
+      - Planner
+      summary: Progress tracking
+      operationId: get_planner_progress
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlanProgress'
+      security:
+      - bearerAuth: []
+  /reports/preview:
+    post:
+      tags:
+      - Reports
+      summary: Preview a report
+      operationId: post_reports_preview
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportPreviewOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportPreviewIn'
+  /reports/{id}/notes:
+    put:
+      tags:
+      - Reports
+      summary: Edit notes/questions
+      operationId: put_reports_id_notes
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportPreviewOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportNotesIn'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /reports/{id}/generate:
+    post:
+      tags:
+      - Reports
+      summary: Generate PDF (async)
+      operationId: post_reports_id_generate
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportOut'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /reports/{id}:
+    get:
+      tags:
+      - Reports
+      summary: Report status
+      operationId: get_reports_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportOut'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /reports/{id}/download:
+    get:
+      tags:
+      - Reports
+      summary: Download PDF
+      operationId: get_reports_id_download
+      responses:
+        default: *id001
+        '200':
+          description: PDF file
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /reports/{id}/share:
+    post:
+      tags:
+      - Reports
+      summary: Create expiring share link
+      operationId: post_reports_id_share
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareIn'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /reports/shares/{id}:
+    delete:
+      tags:
+      - Reports
+      summary: Revoke share link
+      operationId: delete_reports_shares_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /graph/subgraph:
+    get:
+      tags:
+      - Graph
+      summary: User-scoped subgraph
+      operationId: get_graph_subgraph
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubgraphOut'
+      security:
+      - bearerAuth: []
+      description: Requires consent purpose `ml_processing`.
+  /graph/edges/{id}/explanation:
+    get:
+      tags:
+      - Graph
+      summary: Why this connection exists
+      operationId: get_graph_edges_id_explanation
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EdgeExplanation'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /evidence/sources/{id}:
+    get:
+      tags:
+      - Evidence
+      summary: Source details for a citation
+      operationId: get_evidence_sources_id
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceSourceOut'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /privacy/ai-settings:
+    get:
+      tags:
+      - Vault
+      summary: Read AI privacy settings
+      operationId: get_privacy_ai_settings
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AISettings'
+      security:
+      - bearerAuth: []
+    put:
+      tags:
+      - Vault
+      summary: Update AI privacy settings
+      operationId: put_privacy_ai_settings
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AISettings'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AISettings'
+  /privacy/access-history:
+    get:
+      tags:
+      - Vault
+      summary: Access and audit history
+      operationId: get_privacy_access_history
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessHistoryItem'
+      security:
+      - bearerAuth: []
+  /privacy/export:
+    post:
+      tags:
+      - Vault
+      summary: Export all of the user's data (inline JSON in this milestone)
+      operationId: post_privacy_export
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportOut'
+      security:
+      - bearerAuth: []
+  /privacy/account:
+    delete:
+      tags:
+      - Vault
+      summary: Erase account and data
+      operationId: delete_privacy_account
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountIn'
+  /memory/preferences:
+    get:
+      tags:
+      - Memory
+      summary: List approved preferences
+      operationId: get_memory_preferences
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PreferenceOut'
+      security:
+      - bearerAuth: []
+    put:
+      tags:
+      - Memory
+      summary: Add/update a preference
+      operationId: put_memory_preferences
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreferenceOut'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreferenceIn'
+  /memory/preferences/{key}:
+    delete:
+      tags:
+      - Memory
+      summary: Delete a preference
+      operationId: delete_memory_preferences_key
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: key
+        in: path
+        required: true
+        schema:
+          type: string
+  /memory/proposals:
+    get:
+      tags:
+      - Memory
+      summary: Pending proposals
+      operationId: get_memory_proposals
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProposalOut'
+      security:
+      - bearerAuth: []
+  /memory/proposals/{id}/approve:
+    post:
+      tags:
+      - Memory
+      summary: Approve proposal
+      operationId: post_memory_proposals_id_approve
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PreferenceOut'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /memory/proposals/{id}/reject:
+    post:
+      tags:
+      - Memory
+      summary: Reject proposal
+      operationId: post_memory_proposals_id_reject
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+  /memory/enabled:
+    put:
+      tags:
+      - Memory
+      summary: Turn personalization on/off
+      operationId: put_memory_enabled
+      responses:
+        default: *id001
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemoryEnabledIn'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          description: (min 12)
+        display_name:
+          type: string
+        consents:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsentChoice'
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        device:
+          type: string
+    TokenPair:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        expires_in:
+          type: integer
+    RefreshRequest:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        email:
+          type: string
+    ResetPasswordRequest:
+      type: object
+      properties:
+        token:
+          type: string
+        new_password:
+          type: string
+    UserOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        display_name:
+          type: string
+        role:
+          type: string
+    ProfileIn:
+      type: object
+      properties:
+        date_of_birth:
+          type: string
+          format: date
+        height_cm:
+          type: number
+        weight_kg:
+          type: number
+        typical_cycle_length:
+          type: integer
+        contraceptive_use:
+          type: boolean
+          nullable: true
+        conditions_self_reported:
+          type: array
+          items:
+            type: string
+        activity_level:
+          type: string
+        dietary_prefs:
+          type: array
+          items:
+            type: string
+        goals:
+          type: array
+          items:
+            type: string
+    ProfileOut:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        date_of_birth:
+          type: string
+          format: date
+        height_cm:
+          type: number
+        weight_kg:
+          type: number
+        typical_cycle_length:
+          type: integer
+        contraceptive_use:
+          type: boolean
+          nullable: true
+        conditions_self_reported:
+          type: array
+          items:
+            type: string
+        activity_level:
+          type: string
+        dietary_prefs:
+          type: array
+          items:
+            type: string
+        goals:
+          type: array
+          items:
+            type: string
+    ConsentChoice:
+      type: object
+      properties:
+        purpose:
+          type: string
+          description: (health_tracking|ml_processing|llm_external|analytics)
+        granted:
+          type: boolean
+    ConsentSet:
+      type: object
+      properties:
+        granted:
+          type: boolean
+    ConsentOut:
+      type: object
+      properties:
+        purpose:
+          type: string
+        granted:
+          type: boolean
+        version:
+          type: string
+        granted_at:
+          type: string
+          format: date-time
+        revoked_at:
+          type: string
+          format: date-time
+          nullable: true
+    CycleIn:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        flow_intensity:
+          type: integer
+          description: (1-5)
+        notes:
+          type: string
+          nullable: true
+    CycleOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        cycle_length_days:
+          type: integer
+          nullable: true
+        flow_intensity:
+          type: integer
+        notes:
+          type: string
+          nullable: true
+    CycleStats:
+      type: object
+      properties:
+        n_cycles:
+          type: string
+        mean_length:
+          type: number
+          nullable: true
+        std_length:
+          type: number
+          nullable: true
+        min:
+          type: integer
+          nullable: true
+        max:
+          type: integer
+          nullable: true
+    SymptomIn:
+      type: object
+      properties:
+        logged_at:
+          type: string
+          format: date-time
+        symptom_code:
+          type: string
+        severity:
+          type: integer
+          description: (1-5)
+        cycle_id:
+          type: string
+          format: uuid
+          nullable: true
+    SymptomOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        logged_at:
+          type: string
+          format: date-time
+        symptom_code:
+          type: string
+        severity:
+          type: integer
+        cycle_id:
+          type: string
+          format: uuid
+          nullable: true
+    LifestyleIn:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        sleep_hours:
+          type: number
+        sleep_quality:
+          type: integer
+          description: (1-5)
+        activity_minutes:
+          type: integer
+        water_ml:
+          type: integer
+        stress_level:
+          type: integer
+          description: (1-5)
+        nutrition_notes:
+          type: string
+          nullable: true
+    LifestyleOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        sleep_hours:
+          type: number
+        sleep_quality:
+          type: integer
+        activity_minutes:
+          type: integer
+        water_ml:
+          type: integer
+        stress_level:
+          type: integer
+    LifestyleSummary:
+      type: object
+      properties:
+        period_days:
+          type: integer
+        n_entries:
+          type: integer
+        avg_sleep_hours:
+          type: number
+          nullable: true
+        avg_activity_minutes:
+          type: number
+          nullable: true
+        avg_stress:
+          type: number
+          nullable: true
+    MoodIn:
+      type: object
+      properties:
+        logged_at:
+          type: string
+          format: date-time
+        mood_score:
+          type: integer
+          description: (1-5)
+        tags:
+          type: array
+          items:
+            type: string
+    MoodOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        logged_at:
+          type: string
+          format: date-time
+        mood_score:
+          type: integer
+        tags:
+          type: array
+          items:
+            type: string
+    CyclePrediction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        next_start_date:
+          type: string
+          format: date
+        interval_low:
+          type: string
+          format: date
+        interval_high:
+          type: string
+          format: date
+        confidence:
+          type: number
+        method:
+          type: string
+          description: (baseline|ml)
+        model_version:
+          type: string
+        n_cycles_used:
+          type: integer
+        note:
+          type: string
+    Explanation:
+      type: object
+      properties:
+        prediction_id:
+          type: string
+          format: uuid
+        factors:
+          type: array
+          items:
+            type: object
+        disclaimer:
+          type: string
+    RiskInsight:
+      type: object
+      properties:
+        category:
+          type: string
+          description: (no_notable_pattern|worth_tracking|consider_discussing_with_clinician)
+        factors:
+          type: array
+          items:
+            type: string
+        limitations:
+          type: string
+        model_version:
+          type: string
+    RecommendationOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        category:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        source:
+          type: string
+          description: (rule|ml)
+        evidence_source_ids:
+          type: array
+          items:
+            type: string
+    RecommendationFeedback:
+      type: object
+      properties:
+        action:
+          type: string
+          description: (helpful|not_helpful|dismissed|completed)
+    ChatSessionOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        title:
+          type: string
+          nullable: true
+    ChatMessageIn:
+      type: object
+      properties:
+        text:
+          type: string
+        language:
+          type: string
+          nullable: true
+    ChatReply:
+      type: object
+      properties:
+        message_id:
+          type: string
+          format: uuid
+        segments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Segment'
+        uncertainty_note:
+          type: string
+          nullable: true
+        escalation:
+          type: boolean
+    Segment:
+      type: object
+      properties:
+        type:
+          type: string
+          description: (supported_evidence|general_wellness|personal_observation|hypothetical|uncertain)
+        text:
+          type: string
+        source_ids:
+          type: array
+          items:
+            type: string
+        record_ids:
+          type: array
+          items:
+            type: string
+    VoiceReply:
+      type: object
+      properties:
+        transcript:
+          type: string
+        language:
+          type: string
+        reply:
+          $ref: '#/components/schemas/ChatReply'
+        audio_url:
+          type: string
+          nullable: true
+    NotificationOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        read:
+          type: boolean
+    NotificationPrefs:
+      type: object
+      properties:
+        period_reminder:
+          type: boolean
+        reminder_time:
+          type: string
+          description: (HH:MM)
+        wellness_nudges:
+          type: boolean
+        deviation_alerts:
+          type: boolean
+    DeviceToken:
+      type: object
+      properties:
+        platform:
+          type: string
+          description: (ios|android)
+        token:
+          type: string
+    Dashboard:
+      type: object
+      properties:
+        next_period:
+          $ref: '#/components/schemas/CyclePrediction'
+        today_summary:
+          type: object
+        active_deviations:
+          type: integer
+        plan_progress:
+          type: object
+        latest_recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendationOut'
+    ConversationTurnIn:
+      type: object
+      properties:
+        draft_id:
+          type: string
+          format: uuid
+          nullable: true
+        text:
+          type: string
+          nullable: true
+        audio_base64:
+          type: string
+          nullable: true
+        language_hint:
+          type: string
+          description: (en|hi|kn|te)
+          nullable: true
+    ConversationTurnOut:
+      type: object
+      properties:
+        draft_id:
+          type: string
+          format: uuid
+        transcript:
+          type: string
+        language:
+          type: string
+        state:
+          type: string
+          description: (needs_followup|ready_to_confirm|escalation)
+        followup_question:
+          type: string
+          nullable: true
+        extracted:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtractedSymptom'
+        escalation_message:
+          type: string
+          nullable: true
+    ExtractedSymptom:
+      type: object
+      properties:
+        symptom_code:
+          type: string
+        severity:
+          type: integer
+          nullable: true
+        onset:
+          type: string
+          nullable: true
+        duration:
+          type: string
+          nullable: true
+        source_phrase:
+          type: string
+    DraftOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          description: (pending|confirmed|discarded)
+        extracted:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtractedSymptom'
+        comparison_with_history:
+          type: string
+          nullable: true
+    DraftEdit:
+      type: object
+      properties:
+        extracted:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtractedSymptom'
+    DraftConfirmOut:
+      type: object
+      properties:
+        saved_symptom_ids:
+          type: array
+          items:
+            type: string
+        guidance:
+          type: array
+          items:
+            $ref: '#/components/schemas/Segment'
+    TwinOut:
+      type: object
+      properties:
+        status:
+          type: string
+          description: (ready|insufficient_data)
+        n_days:
+          type: integer
+        min_days_required:
+          type: integer
+        baselines:
+          type: array
+          items:
+            type: string
+        model_version:
+          type: string
+          nullable: true
+    SimulateIn:
+      type: object
+      properties:
+        changes:
+          type: array
+          items:
+            type: object
+        horizon_days:
+          type: integer
+    SimulateOut:
+      type: object
+      properties:
+        scenario_id:
+          type: string
+          format: uuid
+        is_hypothetical:
+          type: boolean
+          description: (always true)
+        baseline_series:
+          type: array
+          items:
+            type: string
+        scenario_series:
+          type: array
+          items:
+            type: string
+        uncertainty_band:
+          type: object
+        assumptions:
+          type: array
+          items:
+            type: string
+        factors_considered:
+          type: array
+          items:
+            type: string
+        disclaimer:
+          type: string
+    PatternOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        description:
+          type: string
+        support:
+          type: integer
+        confidence:
+          type: number
+        p_adjusted:
+          type: number
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+    PatternEvidence:
+      type: object
+      properties:
+        pattern_id:
+          type: string
+          format: uuid
+        records:
+          type: array
+          items:
+            type: object
+    Heatmap:
+      type: object
+      properties:
+        metric:
+          type: string
+        axis_x:
+          type: array
+          items:
+            type: string
+        axis_y:
+          type: array
+          items:
+            type: string
+        values:
+          type: array
+          items:
+            type: string
+    DeviationOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        metrics:
+          type: array
+          items:
+            type: string
+        started_at:
+          type: string
+          format: date
+        method:
+          type: string
+        score:
+          type: number
+        status:
+          type: string
+          description: (open|dismissed|resolved)
+        explanation:
+          type: string
+    DeviationDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        explanation:
+          type: string
+        baseline:
+          type: object
+        records:
+          type: array
+          items:
+            type: string
+    TimeMachineOut:
+      type: object
+      properties:
+        range:
+          type: string
+          description: (1m|3m|6m|1y)
+        series:
+          type: array
+          items:
+            type: string
+        cycle_summary:
+          type: object
+        symptom_frequency:
+          type: array
+          items:
+            type: string
+        recurring_observations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PatternOut'
+    CompareOut:
+      type: object
+      properties:
+        period_a:
+          type: object
+        period_b:
+          type: object
+        differences:
+          type: array
+          items:
+            type: object
+    DayOut:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        records:
+          type: array
+          items:
+            type: string
+        imported:
+          type: array
+          items:
+            type: string
+    SummaryOut:
+      type: object
+      properties:
+        range:
+          type: string
+        text:
+          type: string
+        facts:
+          type: array
+          items:
+            type: string
+        generated_from_record_count:
+          type: integer
+    WearableConnectIn:
+      type: object
+      properties:
+        platform:
+          type: string
+          description: (apple_health|health_connect)
+        granted_metrics:
+          type: array
+          items:
+            type: string
+    WearableOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        platform:
+          type: string
+        status:
+          type: string
+        connected_at:
+          type: string
+          format: date-time
+        granted_metrics:
+          type: array
+          items:
+            type: string
+    ImportBatchIn:
+      type: object
+      properties:
+        integration_id:
+          type: string
+          format: uuid
+        measurements:
+          type: array
+          items:
+            type: object
+    ImportBatchOut:
+      type: object
+      properties:
+        accepted:
+          type: integer
+        duplicates:
+          type: integer
+        rejected:
+          type: integer
+    MeasurementOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        metric:
+          type: string
+        value:
+          type: number
+        unit:
+          type: string
+        start:
+          type: string
+          format: date-time
+        source_app:
+          type: string
+        source_device:
+          type: string
+          nullable: true
+    UnifiedAnalytics:
+      type: object
+      properties:
+        range:
+          type: string
+        metrics:
+          type: array
+          items:
+            type: object
+        relationships:
+          type: array
+          items:
+            $ref: '#/components/schemas/PatternOut'
+    ScheduleParseIn:
+      type: object
+      properties:
+        text:
+          type: string
+        date:
+          type: string
+          format: date
+    ScheduleParseOut:
+      type: object
+      properties:
+        blocks:
+          type: array
+          items:
+            type: object
+        needs_confirmation:
+          type: boolean
+    PlanGenerateIn:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        blocks:
+          type: array
+          items:
+            type: string
+        available_minutes:
+          type: integer
+          nullable: true
+    PlanOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlanItemOut'
+        rationale:
+          type: array
+          items:
+            type: string
+    PlanItemOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        start:
+          type: string
+        end:
+          type: string
+        category:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+          description: (planned|done|skipped|rejected)
+    PlanItemPatch:
+      type: object
+      properties:
+        status:
+          type: string
+          nullable: true
+        start:
+          type: string
+          nullable: true
+        end:
+          type: string
+          nullable: true
+    PlanAdaptIn:
+      type: object
+      properties:
+        reason:
+          type: string
+          description: (new_schedule|new_data|user_request)
+        new_text:
+          type: string
+          nullable: true
+    PlanProgress:
+      type: object
+      properties:
+        period_days:
+          type: integer
+        completed:
+          type: integer
+        skipped:
+          type: integer
+        completion_rate:
+          type: number
+    ReportPreviewIn:
+      type: object
+      properties:
+        period_start:
+          type: string
+          format: date
+        period_end:
+          type: string
+          format: date
+        sections:
+          type: array
+          items:
+            type: string
+    ReportPreviewOut:
+      type: object
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        sections:
+          type: array
+          items:
+            type: string
+        suggested_questions:
+          type: array
+          items:
+            type: string
+    ReportNotesIn:
+      type: object
+      properties:
+        notes:
+          type: string
+        questions:
+          type: array
+          items:
+            type: string
+    ReportOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          description: (draft|generating|ready|failed)
+        period_start:
+          type: string
+          format: date
+        period_end:
+          type: string
+          format: date
+        download_url:
+          type: string
+          nullable: true
+    ShareIn:
+      type: object
+      properties:
+        expires_in_days:
+          type: integer
+          description: (1-30)
+    ShareOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        url:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+    SubgraphOut:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
+            type: object
+        edges:
+          type: array
+          items:
+            type: object
+    EdgeExplanation:
+      type: object
+      properties:
+        edge_id:
+          type: string
+          format: uuid
+        explanation:
+          type: string
+        evidence:
+          type: array
+          items:
+            type: string
+    EvidenceSourceOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization:
+          type: string
+        title:
+          type: string
+        url:
+          type: string
+        retrieved_at:
+          type: string
+          format: date-time
+        license:
+          type: string
+          nullable: true
+    AISettings:
+      type: object
+      properties:
+        personalization_enabled:
+          type: boolean
+        external_llm_allowed:
+          type: boolean
+        context_allowlist:
+          type: array
+          items:
+            type: string
+        chat_retention_days:
+          type: integer
+    AccessHistoryItem:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        action:
+          type: string
+        resource:
+          type: string
+          nullable: true
+        outcome:
+          type: string
+          description: (success|failure|blocked)
+        ip:
+          type: string
+          nullable: true
+    ExportOut:
+      type: object
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          description: (ready)
+        download_url:
+          type: string
+        data:
+          type: string
+    DeleteAccountIn:
+      type: object
+      properties:
+        password:
+          type: string
+        confirm:
+          type: string
+          description: ('DELETE')
+    PreferenceIn:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    PreferenceOut:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+        source:
+          type: string
+          description: (user_approved)
+        approved_at:
+          type: string
+          format: date-time
+    ProposalOut:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        key:
+          type: string
+        value:
+          type: string
+        reason:
+          type: string
+        status:
+          type: string
+    MemoryEnabledIn:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+    Ok:
+      type: object
+      properties:
+        ok:
+          type: boolean

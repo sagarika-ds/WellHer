@@ -1,0 +1,26 @@
+sequenceDiagram
+    actor U as User
+    participant M as Mobile
+    participant C as Core backend
+    participant R as Redis
+    participant DB as PostgreSQL
+    U->>M: email + password
+    M->>C: POST /auth/login
+    C->>DB: load user, verify Argon2 hash
+    C->>DB: store refresh token jti + device
+    C-->>M: access JWT (15 min) + refresh token
+    M->>M: save in secure store
+    M->>C: GET /cycles (Bearer access)
+    C->>R: check denylist (token id + session id)
+    C->>C: verify signature, role, ownership
+    C->>C: check consent: health_tracking
+    C->>DB: query WHERE user_id = me
+    C-->>M: 200 data
+    Note over M,C: access token expires
+    M->>C: POST /auth/refresh
+    C->>DB: validate jti, rotate token
+    C-->>M: new access + new refresh
+    U->>M: logout
+    M->>C: POST /auth/logout
+    C->>R: denylist access jti
+    C->>DB: revoke refresh token

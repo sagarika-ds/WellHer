@@ -1,0 +1,14 @@
+flowchart TB
+    EVT["record.confirmed / import"] --> BL["Update personal baseline<br/>median + MAD per metric"]
+    BL --> TS["Per-metric checks"]
+    TS --> Z["Robust z-score"]
+    TS --> EW["EWMA control chart"]
+    TS --> CP["Change-point<br/>CUSUM / ruptures"]
+    BL --> MV["Isolation Forest<br/>multivariate, needs history"]
+    Z --> MRG["Merge + deduplicate<br/>start time of deviation"]
+    EW --> MRG
+    CP --> MRG
+    MV --> MRG
+    MRG --> AE[("anomaly_events<br/>+ supporting_record_ids")]
+    AE --> NTF["Notification (if enabled)"]
+    AE --> API["GET /deviations"]

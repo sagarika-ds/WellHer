@@ -1,0 +1,12 @@
+flowchart LR
+    TL[("timeline_events + records")] --> FE["Feature builder<br/>daily table"]
+    FE --> GATE1{"Enough data?<br/>n days threshold"}
+    GATE1 -->|no| NOP["Return: not enough data"]
+    GATE1 -->|yes| FIT["Per-user model<br/>Bayesian ridge on own history"]
+    FIT --> TP[("twin_profiles")]
+    USR["What-if request<br/>sleep +1h, stress -1 ..."] --> SIM["Scenario engine<br/>apply deltas, re-evaluate fit"]
+    TP --> SIM
+    SIM --> OUT["Baseline vs scenario series<br/>+ uncertainty band"]
+    OUT --> LBL["Label: HYPOTHETICAL<br/>+ assumptions + factors"]
+    LBL --> SC[("simulation_scenarios")]
+    EVT["record.confirmed event"] --> FE

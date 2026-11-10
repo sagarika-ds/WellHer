@@ -1,0 +1,22 @@
+flowchart TB
+    IN["Internal REST<br/>service-token auth"] --> RTR["Routers /v1"]
+    RTR --> CY["cycle"]
+    RTR --> RK["risk"]
+    RTR --> TW["twin"]
+    RTR --> PT["patterns"]
+    RTR --> DV["deviation"]
+    RTR --> RC["recommender / planner"]
+    RTR --> NL["nlp: extraction, rag, evidence"]
+    RTR --> SP["speech: stt, tts"]
+    CY --> EX["explain: SHAP"]
+    RK --> EX
+    CY --> REG["registry loader"]
+    RK --> REG
+    DV --> REG
+    REG --> MLF["MLflow"]
+    NL --> QD[("Qdrant")]
+    NL --> EMB["Sentence Transformers"]
+    NL --> GATE["LLM adapter"]
+    SP --> WH["faster-whisper"]
+    SP --> PI["Piper / fallback TTS"]
+    TRN["training/ offline"] --> MLF

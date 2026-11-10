@@ -1,0 +1,29 @@
+flowchart TB
+    DEVR["Developer push"] --> GHA["GitHub Actions<br/>lint, test, build"]
+    GHA --> ECR["Container registry (ECR)"]
+    GHA --> EAS["EAS Build<br/>Android AAB / iOS IPA"]
+    EAS --> PLAY["Play Console"]
+    EAS --> TF["TestFlight"]
+    subgraph AWS["AWS"]
+        subgraph EC2["EC2 host with Docker Compose"]
+            NG["Nginx + TLS"]
+            BE["backend"]
+            WK["worker"]
+            ML["ml-engine"]
+            QDR["qdrant"]
+            MLF["mlflow"]
+            PRO["prometheus + grafana"]
+        end
+        RDS[("RDS PostgreSQL")]
+        S3[("S3 bucket")]
+        SM["Secrets Manager / KMS"]
+    end
+    ECR --> EC2
+    NG --> BE
+    BE --> RDS
+    BE --> S3
+    BE --> ML
+    ML --> QDR
+    ML --> MLF
+    SM -.-> BE
+    PHONE["User phone"] -->|HTTPS| NG

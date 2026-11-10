@@ -1,0 +1,15 @@
+flowchart TB
+    REQ["HTTP request"] --> MW["Middleware<br/>request-id, rate limit, audit"]
+    MW --> RT["Routers /api/v1"]
+    RT --> DEP["Dependencies<br/>auth, RBAC, consent check"]
+    DEP --> SV["Services<br/>business logic"]
+    SV --> RP["Repositories<br/>SQLAlchemy 2.0"]
+    RP --> DB[("PostgreSQL")]
+    SV --> INT["Integrations<br/>ml_client, storage, push"]
+    SV --> EV["Event publisher"]
+    EV --> RDS[("Redis / ARQ")]
+    RDS --> WK["Worker handlers"]
+    WK --> RP
+    WK --> INT
+    SV --> SCH["Pydantic schemas"]
+    CFG["Config + logging + exceptions"] -.-> SV

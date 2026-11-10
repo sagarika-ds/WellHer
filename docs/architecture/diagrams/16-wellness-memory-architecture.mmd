@@ -1,0 +1,14 @@
+flowchart TB
+    CONV["Conversation / settings"] --> DET["Preference proposal detector"]
+    DET --> PROP[("preference_proposals<br/>pending")]
+    PROP --> UIA["User approves or rejects"]
+    UIA -->|approve| PREF[("user_preferences<br/>source = user_approved")]
+    UIA -->|reject| DROP["Discard"]
+    SW{"personalization_enabled?"} -->|no| NONE["No preferences used"]
+    SW -->|yes| RET["Preference retriever"]
+    PREF --> RET
+    RET --> CHAT["Chat prompt: language, length, tone"]
+    RET --> PLAN["Planner: food, fitness, timing"]
+    RET --> NOTIF["Notification times"]
+    VIEW["View / edit / delete screen"] --> PREF
+    HEALTH[("Health records")] -. separate store .-> PREF

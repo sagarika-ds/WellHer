@@ -1,0 +1,18 @@
+flowchart TB
+    S1["1 Voice recording"] --> S2["2 Transcript + language"]
+    S2 --> S3["3 Structured symptoms"]
+    S3 --> S4["4 User confirmation"]
+    S4 --> S5[("5 symptom_logs + timeline_events")]
+    S5 --> EVT[["6 record.confirmed event"]]
+    EVT --> H1["7 Time Machine aggregates"]
+    EVT --> H2["8 Pattern detector"]
+    EVT --> H3["9 Deviation detector"]
+    EVT --> H4["10 Twin refit"]
+    EVT --> H5["11 Graph upsert"]
+    H2 --> REC["12 Recommendations + planner"]
+    H3 --> REC
+    H4 --> REC
+    H5 --> CHAT["13 Available to AI assistant<br/>(allowlisted)"]
+    S5 --> RPT["14 Selectable in doctor-visit report"]
+    REC --> NTF["15 Notification if enabled"]
+    EVT --> PR[("pipeline_runs: status per handler")]

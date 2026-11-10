@@ -1,0 +1,29 @@
+flowchart TB
+    subgraph UI["Presentation"]
+        SCR["Screens by feature"]
+        CMP["Shared components<br/>forms, calendar, bar chart, states"]
+        THM["Theme: light / dark / system"]
+    end
+    subgraph STATE["State and logic"]
+        QRY["TanStack Query<br/>server cache + mutations"]
+        FRM["React Hook Form + Zod"]
+        AUTHC["AuthContext<br/>session lifecycle"]
+    end
+    subgraph DATA["Data access"]
+        EPS["Typed endpoints<br/>(types generated from OpenAPI)"]
+        AX["Axios client"]
+        INT["Interceptors: bearer, single-flight refresh,<br/>error normalisation"]
+        MEM["Access token: memory only"]
+        SEC["expo-secure-store<br/>refresh token only"]
+    end
+    NAV["React Navigation<br/>signed-out / signed-in stacks + tabs"]
+    NAV --> SCR
+    SCR --> CMP
+    SCR --> QRY --> EPS --> AX --> INT
+    SCR --> FRM
+    AUTHC --> NAV
+    AUTHC --> SEC
+    INT --> MEM
+    INT --> SEC
+    INT -->|HTTPS| BE["Core backend"]
+    THM -.-> SCR
