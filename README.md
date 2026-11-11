@@ -1,12 +1,12 @@
 # WellHer
 
-AI-Driven Personalized Wellness and Preventive Healthcare System for Women.
+AI-Driven Personalized Wellness and Healthcare System for Women.
 
-WellHer is a university project. It is a website where a woman can track her menstrual cycle, symptoms, sleep, and mood in one private place.
+WellHer is a university project. It is a website where a woman can track her menstrual cycle, symptoms, sleep and mood in one private place.
 
 ## Features
 
-- Sign up, log in, and reset a password
+- Sign up, log in, and set a password
 - Log periods, symptoms, daily sleep and activity, and moods
 - See a summary: cycle day, average cycle length, and the last 7 days of sleep and mood
 - Choose what your data can be used for (consent)
