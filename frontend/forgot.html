@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reset your password · WellHer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="container narrow">
+    <!-- Step 1: ask for a reset code. -->
+    <form id="request-form" class="card">
+      <h1>Reset your password</h1>
+      <p class="muted">Enter your email and we'll send you a reset code.</p>
+
+      <div id="request-message" class="alert hidden"></div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+      </div>
+
+      <button id="request-submit" class="btn btn-block" type="submit">Send reset code</button>
+    </form>
+
+    <!-- Step 2: use the code to choose a new password. -->
+    <form id="reset-form" class="card">
+      <h2>Already have a code?</h2>
+
+      <div id="reset-message" class="alert hidden"></div>
+
+      <div class="field">
+        <label for="token">Reset code</label>
+        <input id="token" name="token" autocomplete="one-time-code" required minlength="20" maxlength="200">
+        <p class="hint">
+          In development no email is sent: the code appears in the backend's terminal window,
+          on the line starting with <code>DEV EMAIL</code>, after <code>reset_token=</code>.
+        </p>
+      </div>
+
+      <div class="field">
+        <label for="new-password">New password</label>
+        <input id="new-password" name="new_password" type="password" autocomplete="new-password"
+               required minlength="12" maxlength="128">
+        <p class="hint">At least 12 characters and at least 5 different characters.</p>
+      </div>
+
+      <button id="reset-submit" class="btn btn-block" type="submit">Change password</button>
+    </form>
+
+    <p class="center small"><a href="login.html">Back to log in</a></p>
+  </main>
+
+  <footer class="site-footer">For awareness only, not a medical diagnosis.</footer>
+
+  <script type="module" src="js/forgot.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings · WellHer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="home.html">WellHer</a>
+      <nav class="nav" aria-label="Main">
+        <a href="home.html">Home</a>
+        <a href="log.html">Log</a>
+        <a href="settings.html" aria-current="page">Settings</a>
+      </nav>
+      <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Settings</h1>
+
+    <!-- ===================== Profile ===================== -->
+    <section class="card" aria-labelledby="profile-title">
+      <h2 id="profile-title">Profile</h2>
+      <p class="muted small">Everything here is optional. Leave a field empty if you'd rather not say.</p>
+      <form id="profile-form">
+        <div id="profile-message" class="alert hidden"></div>
+        <div class="grid grid-2">
+          <div class="field">
+            <label for="profile-dob">Date of birth</label>
+            <input id="profile-dob" name="date_of_birth" type="date" min="1900-01-01">
+          </div>
+          <div class="field">
+            <label for="profile-cycle">Usual cycle length (days)</label>
+            <input id="profile-cycle" name="typical_cycle_length" type="number" min="15" max="90" step="1">
+          </div>
+          <div class="field">
+            <label for="profile-height">Height (cm)</label>
+            <input id="profile-height" name="height_cm" type="number" min="50" max="250" step="0.1">
+          </div>
+          <div class="field">
+            <label for="profile-weight">Weight (kg)</label>
+            <input id="profile-weight" name="weight_kg" type="number" min="20" max="400" step="0.1">
+          </div>
+          <div class="field">
+            <label for="profile-activity">Activity level</label>
+            <select id="profile-activity" name="activity_level">
+              <option value="">Not given</option>
+              <option value="sedentary">Sedentary</option>
+              <option value="light">Light</option>
+              <option value="moderate">Moderate</option>
+              <option value="active">Active</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="profile-contraceptive">Using contraception</label>
+            <select id="profile-contraceptive" name="contraceptive_use">
+              <option value="">Not given</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="profile-conditions">Health conditions</label>
+          <input id="profile-conditions" name="conditions_self_reported" type="text" placeholder="e.g. PCOS, asthma">
+          <p class="hint">Separate several with commas.</p>
+        </div>
+        <div class="field">
+          <label for="profile-diet">Dietary preferences</label>
+          <input id="profile-diet" name="dietary_prefs" type="text" placeholder="e.g. vegetarian">
+          <p class="hint">Separate several with commas.</p>
+        </div>
+        <div class="field">
+          <label for="profile-goals">Goals</label>
+          <input id="profile-goals" name="goals" type="text" placeholder="e.g. sleep better, track my cycle">
+          <p class="hint">Separate several with commas.</p>
+        </div>
+        <button id="profile-submit" class="btn" type="submit">Save profile</button>
+      </form>
+    </section>
+
+    <!-- ===================== Consent ===================== -->
+    <section class="card" aria-labelledby="consent-title">
+      <h2 id="consent-title">What WellHer may do with your data</h2>
+      <div id="consent-message" class="alert hidden"></div>
+      <p class="muted small">Each switch is saved as soon as you change it.</p>
+      <!-- The value of each checkbox is the backend's consent "purpose" name (same as on Sign up). -->
+      <div class="stack">
+        <label class="check">
+          <input type="checkbox" name="consent" value="health_tracking">
+          <span>Store my health logs. <span class="muted">Needed to log and see periods, symptoms, sleep and mood.
+            If you turn it off, your logs are kept but hidden until you turn it on again.</span></span>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="consent" value="ml_processing">
+          <span>Use my logs to look for patterns and insights.</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="consent" value="llm_external">
+          <span>Allow de-identified text to be sent to an external AI service.</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="consent" value="analytics">
+          <span>Share anonymous usage statistics.</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- ===================== AI settings ===================== -->
+    <section class="card" aria-labelledby="ai-title">
+      <h2 id="ai-title">AI settings</h2>
+      <p class="muted small">
+        These choices are stored now and will apply when WellHer's AI features are added.
+      </p>
+      <form id="ai-form">
+        <div id="ai-message" class="alert hidden"></div>
+        <div class="stack">
+          <label class="check">
+            <input type="checkbox" name="personalization_enabled">
+            <span>Personalise answers using my data.</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" name="external_llm_allowed">
+            <span>Allow an external AI service. <span class="muted">Needs the external AI consent above.</span></span>
+          </label>
+        </div>
+        <fieldset class="mt-4">
+          <legend>Information the AI may use</legend>
+          <!-- Filled in by js/settings/ai.js from its list of the backend's allowed names. -->
+          <div id="ai-context" class="stack"></div>
+        </fieldset>
+        <div class="field">
+          <label for="ai-retention">Keep chat history for (days)</label>
+          <input id="ai-retention" name="chat_retention_days" type="number" min="0" max="365" step="1" required>
+          <p class="hint">0 means chats are not kept.</p>
+        </div>
+        <button id="ai-submit" class="btn" type="submit">Save AI settings</button>
+      </form>
+    </section>
+
+    <!-- ===================== Access history ===================== -->
+    <section class="card" aria-labelledby="history-title">
+      <h2 id="history-title">Access history</h2>
+      <p class="muted small">Every time your data is viewed or changed, the backend records it. Newest first.</p>
+      <div id="history-message" class="alert hidden"></div>
+      <ul id="history-list" class="list"></ul>
+      <button id="history-more" class="btn btn-secondary mt-4 hidden" type="button">Show more</button>
+    </section>
+
+    <!-- ===================== Export ===================== -->
+    <section class="card" aria-labelledby="export-title">
+      <h2 id="export-title">Download my data</h2>
+      <p>Get a copy of everything WellHer stores about you, as a JSON file.</p>
+      <div id="export-message" class="alert hidden"></div>
+      <button id="export-button" class="btn btn-secondary" type="button">Download my data</button>
+    </section>
+
+    <!-- ===================== Delete account ===================== -->
+    <section class="card" aria-labelledby="delete-title">
+      <h2 id="delete-title">Delete my account</h2>
+      <p>
+        This permanently deletes your account and all your logs. It cannot be undone.
+        You may want to download your data first.
+      </p>
+      <form id="delete-form">
+        <div id="delete-message" class="alert hidden"></div>
+        <div class="field">
+          <label for="delete-password">Your password</label>
+          <input id="delete-password" name="password" type="password" autocomplete="current-password" required>
+        </div>
+        <div class="field">
+          <label for="delete-confirm">Type DELETE to confirm</label>
+          <input id="delete-confirm" name="confirm" type="text" autocomplete="off" required>
+        </div>
+        <button id="delete-submit" class="btn btn-danger" type="submit">Delete my account</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">For awareness only, not a medical diagnosis.</footer>
+
+  <script type="module" src="js/settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log · WellHer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="home.html">WellHer</a>
+      <nav class="nav" aria-label="Main">
+        <a href="home.html">Home</a>
+        <a href="log.html" aria-current="page">Log</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Log</h1>
+    <div id="page-message" class="alert hidden"></div>
+
+    <!-- Shown only if the "store my health logs" consent is off. -->
+    <div id="consent-box" class="card hidden">
+      <h2>Allow storing your health logs?</h2>
+      <p>
+        To save periods, symptoms, sleep and mood, WellHer needs your permission to store them.
+        You can turn this off again later.
+      </p>
+      <button id="consent-button" class="btn" type="button">Allow storing my health logs</button>
+    </div>
+
+    <div id="sections" class="hidden">
+      <!-- ===================== Period ===================== -->
+      <section class="card" aria-labelledby="period-title">
+        <h2 id="period-title">Period</h2>
+        <form id="period-form">
+          <div id="period-message" class="alert hidden"></div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="period-start">First day</label>
+              <input id="period-start" name="start_date" type="date" required>
+            </div>
+            <div class="field">
+              <label for="period-end">Last day</label>
+              <input id="period-end" name="end_date" type="date">
+              <p class="hint">Leave empty if your period hasn't ended yet.</p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="period-flow">Flow on the heaviest day</label>
+            <select id="period-flow" name="flow_intensity">
+              <option value="">Not recorded</option>
+              <option value="1">1 – very light</option>
+              <option value="2">2 – light</option>
+              <option value="3">3 – medium</option>
+              <option value="4">4 – heavy</option>
+              <option value="5">5 – very heavy</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="period-notes">Notes</label>
+            <textarea id="period-notes" name="notes" maxlength="2000"></textarea>
+          </div>
+          <div class="row">
+            <button id="period-submit" class="btn" type="submit">Save period</button>
+            <button id="period-cancel" class="btn btn-secondary hidden" type="button">Cancel editing</button>
+          </div>
+        </form>
+        <h3 class="mt-4">Recent periods</h3>
+        <ul id="period-list" class="list"></ul>
+      </section>
+
+      <!-- ===================== Symptom ===================== -->
+      <section class="card" aria-labelledby="symptom-title">
+        <h2 id="symptom-title">Symptom</h2>
+        <form id="symptom-form">
+          <div id="symptom-message" class="alert hidden"></div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="symptom-code">Symptom</label>
+              <select id="symptom-code" name="symptom_code" required></select>
+            </div>
+            <div class="field">
+              <label for="symptom-severity">How strong?</label>
+              <select id="symptom-severity" name="severity" required>
+                <option value="1">1 – barely noticeable</option>
+                <option value="2">2 – mild</option>
+                <option value="3" selected>3 – moderate</option>
+                <option value="4">4 – strong</option>
+                <option value="5">5 – severe</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="symptom-time">When</label>
+            <input id="symptom-time" name="logged_at" type="datetime-local" required>
+          </div>
+          <button id="symptom-submit" class="btn" type="submit">Save symptom</button>
+        </form>
+        <h3 class="mt-4">Recent symptoms</h3>
+        <ul id="symptom-list" class="list"></ul>
+      </section>
+
+      <!-- ===================== Daily ===================== -->
+      <section class="card" aria-labelledby="daily-title">
+        <h2 id="daily-title">Sleep, water, activity and stress</h2>
+        <form id="daily-form">
+          <div id="daily-message" class="alert hidden"></div>
+          <div class="field">
+            <label for="daily-date">Day</label>
+            <input id="daily-date" name="date" type="date" required>
+            <p class="hint">One entry per day. Saving a day that already has one updates it.</p>
+          </div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="daily-sleep">Sleep (hours)</label>
+              <input id="daily-sleep" name="sleep_hours" type="number" min="0" max="24" step="0.5">
+            </div>
+            <div class="field">
+              <label for="daily-quality">Sleep quality</label>
+              <select id="daily-quality" name="sleep_quality">
+                <option value="">Not recorded</option>
+                <option value="1">1 – very poor</option>
+                <option value="2">2 – poor</option>
+                <option value="3">3 – okay</option>
+                <option value="4">4 – good</option>
+                <option value="5">5 – very good</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="daily-water">Water (ml)</label>
+              <input id="daily-water" name="water_ml" type="number" min="0" max="20000" step="50">
+              <p class="hint">A glass is about 250 ml.</p>
+            </div>
+            <div class="field">
+              <label for="daily-activity">Activity (minutes)</label>
+              <input id="daily-activity" name="activity_minutes" type="number" min="0" max="1440" step="5">
+            </div>
+          </div>
+          <div class="field">
+            <label for="daily-stress">Stress</label>
+            <select id="daily-stress" name="stress_level">
+              <option value="">Not recorded</option>
+              <option value="1">1 – very calm</option>
+              <option value="2">2 – calm</option>
+              <option value="3">3 – some stress</option>
+              <option value="4">4 – stressed</option>
+              <option value="5">5 – very stressed</option>
+            </select>
+          </div>
+          <div class="row">
+            <button id="daily-submit" class="btn" type="submit">Save day</button>
+            <button id="daily-cancel" class="btn btn-secondary hidden" type="button">Cancel editing</button>
+          </div>
+        </form>
+        <h3 class="mt-4">Recent days</h3>
+        <ul id="daily-list" class="list"></ul>
+      </section>
+
+      <!-- ===================== Mood ===================== -->
+      <section class="card" aria-labelledby="mood-title">
+        <h2 id="mood-title">Mood</h2>
+        <form id="mood-form">
+          <div id="mood-message" class="alert hidden"></div>
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="mood-score">How do you feel?</label>
+              <select id="mood-score" name="mood_score" required>
+                <option value="1">1 – very low</option>
+                <option value="2">2 – low</option>
+                <option value="3" selected>3 – okay</option>
+                <option value="4">4 – good</option>
+                <option value="5">5 – very good</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="mood-time">When</label>
+              <input id="mood-time" name="logged_at" type="datetime-local" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="mood-tags">Tags</label>
+            <input id="mood-tags" name="tags" placeholder="e.g. tired, calm, anxious">
+            <p class="hint">Optional. Separate with commas, up to 10 tags of 30 characters each.</p>
+          </div>
+          <button id="mood-submit" class="btn" type="submit">Save mood</button>
+        </form>
+        <h3 class="mt-4">Recent moods</h3>
+        <ul id="mood-list" class="list"></ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">For awareness only, not a medical diagnosis.</footer>
+
+  <script type="module" src="js/log.js"></script>
+</body>
+</html>

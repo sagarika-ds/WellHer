@@ -1,0 +1,387 @@
+/* =====================================================================
+   WellHer: one stylesheet for the whole website.
+
+   How it is organised:
+     1. Design tokens   - colours, spacing, sizes as CSS variables
+     2. Base            - page defaults for plain HTML elements
+     3. Layout          - page width, header, navigation, footer
+     4. Components      - cards, buttons, forms, alerts, badges, bars
+     5. Helpers         - small utility classes
+     6. Wider screens   - changes for tablets and laptops
+
+   Mobile first: the normal rules are for phones; the @media block at
+   the end adjusts things for wider screens.
+   ===================================================================== */
+
+
+/* 1. Design tokens -----------------------------------------------------
+   Change a value here and it changes everywhere it is used, e.g.
+   `color: var(--text);`. All text colours meet WCAG AA contrast
+   (4.5:1 or more) on the backgrounds they are used on. */
+:root {
+  --primary: #6b3fa0;        /* plum: buttons, links, active nav */
+  --primary-dark: #53307d;   /* hover/pressed state of primary */
+  --primary-soft: #f1eaf8;   /* light plum backgrounds */
+  --accent: #b8335f;         /* rose: highlights such as period days */
+
+  --bg: #fbf8fc;             /* page background */
+  --surface: #ffffff;        /* cards and inputs */
+  --border: #e3d9ec;         /* lines around cards and inputs */
+  --text: #241b2f;           /* main text */
+  --muted: #625873;          /* secondary text */
+
+  --success: #1f7a4d;
+  --success-soft: #e6f4ec;
+  --error: #b3261e;
+  --error-soft: #fbeaea;
+  --warning: #8a5300;
+  --warning-soft: #fff4e0;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(36, 27, 47, 0.08);
+  --max-width: 960px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+
+/* 2. Base --------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;    /* width includes padding and border: easier maths */
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+h1, h2, h3 {
+  line-height: 1.25;
+  margin: 0 0 var(--space-3);
+}
+h1 { font-size: 1.6rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.05rem; }
+
+p { margin: 0 0 var(--space-3); }
+
+a { color: var(--primary); }
+a:hover { color: var(--primary-dark); }
+
+/* A visible outline for keyboard users on every focusable element. */
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+
+/* 3. Layout ------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+/* Top bar with the brand name and the page links. */
+.site-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.site-header .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+}
+.brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+  margin-right: auto;        /* pushes the nav to the right */
+}
+
+/* On phones the links get a row of their own under the brand and the Log out button
+   (order: 3 moves them after the button). Wider screens put everything on one row (section 6). */
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  order: 3;
+  width: 100%;
+}
+.nav a {
+  padding: var(--space-2) var(--space-3);
+  border-radius: 999px;
+  color: var(--text);
+  text-decoration: none;
+}
+.nav a:hover { background: var(--primary-soft); }
+.nav a[aria-current="page"] {   /* the page you are on */
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Centred narrow column for login, sign-up and similar pages. */
+.narrow {
+  max-width: 440px;
+  margin: var(--space-6) auto;
+}
+
+.site-footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.875rem;
+  padding: var(--space-5) var(--space-4);
+}
+
+
+/* 4. Components --------------------------------------------------------- */
+
+/* Card: a white box that groups related content. */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+.card > :last-child { margin-bottom: 0; }
+
+/* Buttons. Use on <button> or on <a> that should look like a button. */
+.btn {
+  display: inline-block;
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover { background: var(--primary-dark); color: #fff; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--primary);
+}
+.btn-secondary:hover { background: var(--primary-soft); color: var(--primary-dark); }
+
+.btn-danger {
+  background: var(--error);
+  border-color: var(--error);
+}
+.btn-danger:hover { background: #8c1d17; }
+
+.btn-block { display: block; width: 100%; }
+
+/* Smaller buttons for rows in a list (Edit, Delete). */
+.btn-small {
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.875rem;
+}
+
+/* Forms: wrap each label + input in a .field. */
+.field { margin-bottom: var(--space-4); }
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+input,
+select,
+textarea {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary);
+}
+textarea { min-height: 90px; resize: vertical; }
+
+/* A group of related inputs (e.g. the consent checkboxes) with a heading. */
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 var(--space-4);
+}
+legend {
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: var(--space-1);
+}
+
+/* Checkboxes and radio buttons sit next to their text, not above it. */
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-weight: 400;
+  margin-bottom: var(--space-2);
+}
+.check input {
+  width: auto;
+  margin-top: 4px;
+}
+
+.hint {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-top: var(--space-1);
+}
+
+/* Alerts: messages after an action. Add role="alert" or role="status" in HTML. */
+.alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: 8px;
+  margin-bottom: var(--space-4);
+  border: 1px solid transparent;
+}
+.alert-info    { background: var(--primary-soft); border-color: var(--border); }
+.alert-success { background: var(--success-soft); color: var(--success); border-color: var(--success); }
+.alert-error   { background: var(--error-soft);   color: var(--error);   border-color: var(--error); }
+.alert-warning { background: var(--warning-soft); color: var(--warning); border-color: var(--warning); }
+
+/* Badge: a small label such as "Estimate" or a symptom name. */
+.badge {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Big number with a caption, e.g. "Day 12" / "of your cycle". */
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.1;
+}
+.stat-label { color: var(--muted); font-size: 0.9rem; }
+
+/* Simple vertical bar chart built from plain divs (no chart library).
+   Each bar's height is set from JavaScript, e.g. bar.style.height = "60%". */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  height: 140px;
+  padding-top: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.bar-fill {
+  width: 100%;
+  max-width: 36px;
+  min-height: 2px;
+  background: var(--primary);
+  border-radius: 6px 6px 0 0;
+}
+/* The number shown above a bar. */
+.bar-value {
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+/* Lists of entries (recent logs, access history). */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+.list li:last-child { border-bottom: none; }
+
+
+/* 5. Helpers ------------------------------------------------------------ */
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+.center { text-align: center; }
+.mt-4 { margin-top: var(--space-4); }
+.hidden { display: none !important; }    /* toggled from JavaScript */
+
+/* Stack children vertically or in a row with even gaps. */
+.stack > * + * { margin-top: var(--space-3); }
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Responsive grid: one column on phones, more on wider screens (see below). */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+.grid > .card { margin-bottom: 0; }
+
+/* Text only for screen readers (e.g. a label that is obvious visually). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+
+/* 6. Wider screens ------------------------------------------------------ */
+@media (min-width: 700px) {
+  h1 { font-size: 2rem; }
+  .container { padding: var(--space-5); }
+  .nav { order: 0; width: auto; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Style guide · WellHer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Development page: shows every building block from css/style.css in one place.
+       Not linked from the site; open /styleguide.html directly. -->
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">WellHer</a>
+      <nav class="nav" aria-label="Main">
+        <a href="#">Home</a>
+        <a href="#">Log</a>
+        <a href="styleguide.html" aria-current="page">Style guide</a>
+        <a href="#">Settings</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Style guide</h1>
+    <p class="muted">Every component the pages are built from.</p>
+
+    <div class="card">
+      <h2>Server status</h2>
+      <p id="server-status" class="muted">Checking…</p>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="stat-label">Cycle day</div>
+        <div class="stat-value">12</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Average cycle</div>
+        <div class="stat-value">28 days</div>
+      </div>
+      <div class="card">
+        <div class="stat-label">Average sleep</div>
+        <div class="stat-value">6.8 h</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h2>Buttons</h2>
+        <div class="row">
+          <button class="btn" type="button">Save</button>
+          <button class="btn btn-secondary" type="button">Cancel</button>
+          <button class="btn btn-danger" type="button">Delete</button>
+          <button class="btn" type="button" disabled>Saving…</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Alerts and badges</h2>
+        <div class="alert alert-success" role="status">Saved.</div>
+        <div class="alert alert-error" role="alert">Consent for health_tracking is required.</div>
+        <div class="alert alert-warning">Your session will end soon.</div>
+        <div class="alert alert-info">Tip: log every day for better summaries.</div>
+        <p><span class="badge">cramps</span> <span class="badge">fatigue</span></p>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <form class="card" onsubmit="return false">
+        <h2>Form</h2>
+        <div class="field">
+          <label for="sg-email">Email</label>
+          <input id="sg-email" type="email" placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="sg-flow">Flow</label>
+          <select id="sg-flow">
+            <option>1 – very light</option>
+            <option>3 – medium</option>
+            <option>5 – very heavy</option>
+          </select>
+          <p class="hint">How heavy was your period on its heaviest day?</p>
+        </div>
+        <div class="field">
+          <label for="sg-notes">Notes</label>
+          <textarea id="sg-notes"></textarea>
+        </div>
+        <label class="check"><input type="checkbox"> Allow storing my health logs</label>
+        <button class="btn btn-block" type="submit">Submit</button>
+      </form>
+
+      <div class="card">
+        <h2>Bars and lists</h2>
+        <div class="bars" aria-label="Sleep, last 7 days">
+          <div class="bar"><div class="bar-fill" style="height:70%"></div>Mon</div>
+          <div class="bar"><div class="bar-fill" style="height:55%"></div>Tue</div>
+          <div class="bar"><div class="bar-fill" style="height:80%"></div>Wed</div>
+          <div class="bar"><div class="bar-fill" style="height:40%"></div>Thu</div>
+          <div class="bar"><div class="bar-fill" style="height:65%"></div>Fri</div>
+          <div class="bar"><div class="bar-fill" style="height:90%"></div>Sat</div>
+          <div class="bar"><div class="bar-fill" style="height:75%"></div>Sun</div>
+        </div>
+        <ul class="list">
+          <li><span>Period started</span><span class="muted small">2 Nov</span></li>
+          <li><span>Headache · severity 2</span><span class="muted small">5 Nov</span></li>
+          <li><span>Mood 4/5</span><span class="muted small">Today</span></li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">For awareness only, not a medical diagnosis.</footer>
+
+  <script>
+    // Checks that the backend answers. /health is outside /api/v1, so plain fetch() is used here.
+    fetch("/health")
+      .then((r) => r.json())
+      .then((d) => {
+        document.getElementById("server-status").textContent = "Backend " + d.version + " is " + d.status + ".";
+      })
+      .catch(() => {
+        document.getElementById("server-status").textContent = "Backend not reachable.";
+      });
+  </script>
+</body>
+</html>

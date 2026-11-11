@@ -1,3 +1,4 @@
+import sys
 import uuid
 
 import pytest
@@ -99,6 +100,7 @@ async def test_event_json_roundtrip():
     assert DomainEvent.from_json(ev.to_json()) == ev
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="arq Worker.close() uses signal.SIGUSR1, which Windows lacks")
 async def test_publish_via_arq_queue_and_worker(client, sessionmaker_, monkeypatch):
     """Production path: request enqueues to Redis; a separate ARQ worker processes it."""
     monkeypatch.setattr(get_settings(), "events_inline", False)

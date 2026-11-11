@@ -6,8 +6,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://wellness:testpw@localhost:5432/wellness_test")
-os.environ.setdefault("REDIS_URL", "redis://localhost:6379/15")
+os.environ.setdefault("DATABASE_URL", "postgresql+asyncpg://wellness:testpw@127.0.0.1:5432/wellness_test")
+os.environ.setdefault("REDIS_URL", "redis://127.0.0.1:6379/15")
 os.environ.setdefault("JWT_SECRET", "test-only-secret-" + "x" * 40)
 os.environ.setdefault("FIELD_ENCRYPTION_KEY", base64.b64encode(b"0123456789abcdef0123456789abcdef").decode())
 os.environ["EVENTS_INLINE"] = "true"

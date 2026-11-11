@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create an account · WellHer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="container narrow">
+    <form id="signup-form" class="card">
+      <h1>Create an account</h1>
+
+      <div id="message" class="alert hidden"></div>
+
+      <div class="field">
+        <label for="display-name">Your name</label>
+        <input id="display-name" name="display_name" autocomplete="name" required maxlength="100">
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password"
+               required minlength="12" maxlength="128" aria-describedby="password-hint">
+        <p id="password-hint" class="hint">
+          At least 12 characters, at least 5 different characters,
+          and not the part of your email before the @.
+        </p>
+      </div>
+
+      <fieldset>
+        <legend>What may we use your data for?</legend>
+        <p class="hint">All off by default. You can change these any time in Settings.</p>
+
+        <!-- The value of each checkbox is the backend's consent "purpose" name. -->
+        <label class="check">
+          <input type="checkbox" name="consent" value="health_tracking">
+          <span>Store my health logs. <span class="muted">Needed to log periods, symptoms, sleep and mood.</span></span>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="consent" value="ml_processing">
+          <span>Use my logs to look for patterns and insights.</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="consent" value="llm_external">
+          <span>Allow de-identified text to be sent to an external AI service.</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" name="consent" value="analytics">
+          <span>Share anonymous usage statistics.</span>
+        </label>
+      </fieldset>
+
+      <button id="submit" class="btn btn-block" type="submit">Create account</button>
+
+      <p class="center small mt-4">
+        Already have an account? <a href="login.html">Log in</a>
+      </p>
+    </form>
+  </main>
+
+  <footer class="site-footer">For awareness only, not a medical diagnosis.</footer>
+
+  <script type="module" src="js/signup.js"></script>
+</body>
+</html>

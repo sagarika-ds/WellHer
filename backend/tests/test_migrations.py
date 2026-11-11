@@ -7,12 +7,12 @@ import asyncpg
 import pytest
 
 BACKEND = Path(__file__).resolve().parents[1]
-ADMIN = "postgresql://wellness:testpw@localhost:5432/postgres"
+ADMIN = "postgresql://wellness:testpw@127.0.0.1:5432/postgres"
 SCRATCH = "wellness_migtest"
 
 
 def alembic(*args, db=SCRATCH):
-    env = {**os.environ, "DATABASE_URL": f"postgresql+asyncpg://wellness:testpw@localhost:5432/{db}"}
+    env = {**os.environ, "DATABASE_URL": f"postgresql+asyncpg://wellness:testpw@127.0.0.1:5432/{db}"}
     return subprocess.run([sys.executable, "-m", "alembic", *args], cwd=BACKEND, env=env,
                           capture_output=True, text=True)
 
@@ -30,7 +30,7 @@ async def scratch_db():
 
 
 async def _tables():
-    c = await asyncpg.connect(f"postgresql://wellness:testpw@localhost:5432/{SCRATCH}")
+    c = await asyncpg.connect(f"postgresql://wellness:testpw@127.0.0.1:5432/{SCRATCH}")
     rows = await c.fetch("select table_name from information_schema.tables where table_schema='public'")
     await c.close()
     return {r[0] for r in rows}

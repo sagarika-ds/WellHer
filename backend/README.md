@@ -34,7 +34,7 @@ pytest                                # 96 tests, ~50 s, real PostgreSQL + Redis
 pytest --cov                          # coverage (greenlet-aware): 96 %
 bash ../scripts/smoke_test.sh         # real uvicorn + real arq worker + curl, fresh database
 ```
-Test DB defaults: `postgresql+asyncpg://wellness:testpw@localhost:5432/wellness_test`, Redis db 15 (override with env vars).
+Test DB defaults: `postgresql+asyncpg://wellness:testpw@127.0.0.1:5432/wellness_test`, Redis db 15 (override with env vars).
 
 ## Layout
 `app/core` config, security, crypto, errors, logging · `app/models` ORM · `app/schemas` Pydantic · `app/repositories` SQL only ·

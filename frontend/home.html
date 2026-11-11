@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home · WellHer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- The same header is copied into every page that needs a login. -->
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="home.html">WellHer</a>
+      <nav class="nav" aria-label="Main">
+        <a href="home.html" aria-current="page">Home</a>
+        <a href="log.html">Log</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <button id="logout" class="btn btn-secondary" type="button">Log out</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 id="greeting">Hello</h1>
+    <div id="message" class="alert hidden"></div>
+
+    <!-- Shown only if the "store my health logs" consent is off. -->
+    <div id="consent-box" class="card hidden">
+      <h2>Your health logs are switched off</h2>
+      <p>
+        WellHer only shows and stores your periods, symptoms, sleep and mood if you allow it.
+        You can turn this on in <a href="settings.html">Settings</a>.
+      </p>
+    </div>
+
+    <!-- Filled in by js/home.js. "…" is shown until the data arrives. -->
+    <div id="dashboard" class="hidden">
+      <div class="grid grid-3">
+        <section class="card" aria-labelledby="cycle-title">
+          <h2 id="cycle-title" class="stat-label">Cycle day</h2>
+          <p id="cycle-day" class="stat-value">…</p>
+          <p id="cycle-detail" class="muted small"></p>
+        </section>
+
+        <section class="card" aria-labelledby="stats-title">
+          <h2 id="stats-title" class="stat-label">Average cycle length</h2>
+          <p id="stats-mean" class="stat-value">…</p>
+          <p id="stats-detail" class="muted small"></p>
+        </section>
+
+        <section class="card" aria-labelledby="summary-title">
+          <h2 id="summary-title" class="stat-label">Last 30 days</h2>
+          <ul id="summary-list" class="list small"></ul>
+        </section>
+      </div>
+
+      <div class="grid grid-2 mt-4">
+        <section class="card" aria-labelledby="sleep-title">
+          <h2 id="sleep-title">Sleep, last 7 days</h2>
+          <div id="sleep-bars" class="bars"></div>
+          <p class="muted small">Hours of sleep per night. Add them under Log → Daily.</p>
+        </section>
+
+        <section class="card" aria-labelledby="mood-title">
+          <h2 id="mood-title">Mood, last 7 days</h2>
+          <div id="mood-bars" class="bars"></div>
+          <p class="muted small">Average mood per day, from 1 (very low) to 5 (very good).</p>
+        </section>
+      </div>
+
+      <section class="card mt-4" aria-labelledby="symptoms-title">
+        <h2 id="symptoms-title">Recent symptoms</h2>
+        <ul id="symptom-list" class="list"></ul>
+      </section>
+
+      <p class="center">
+        <a class="btn" href="log.html">Log something</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-footer">For awareness only, not a medical diagnosis.</footer>
+
+  <script type="module" src="js/home.js"></script>
+</body>
+</html>

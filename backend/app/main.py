@@ -1,10 +1,12 @@
 """Core backend (ZIP 2): auth, consent, audit, encrypted records, privacy, event pipeline."""
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
+from fastapi.staticfiles import StaticFiles
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 from redis.asyncio import Redis
 from sqlalchemy import text
@@ -22,6 +24,19 @@ from app.events.bus import close_pool
 from app.middleware.http import RequestMiddleware
 
 VERSION = "0.2.0"
+
+# The website (plain HTML/CSS/JS) lives in <repo>/frontend, next to this backend folder.
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
+
+
+class WebsiteFiles(StaticFiles):
+    """Static files with `Cache-Control: no-cache`: the browser re-checks every file on each load,
+    so an edited page or script is picked up at once (unchanged files still come back as a quick 304)."""
+
+    async def get_response(self, path: str, scope):  # type: ignore[override]
+        response = await super().get_response(path, scope)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
 
 
 @asynccontextmanager
@@ -98,6 +113,13 @@ def create_app() -> FastAPI:
     @app.get("/metrics", include_in_schema=False)
     async def metrics() -> Response:
         return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+    # Serve the website from the same server as the API, so the browser needs no CORS.
+    # Mounted LAST: the API, /docs, /health etc. are matched first; any other path is looked up as a file.
+    # html=True makes "/" return index.html.
+    # Skipped when the folder is absent (e.g. in the backend-only Docker image).
+    if FRONTEND_DIR.is_dir():
+        app.mount("/", WebsiteFiles(directory=FRONTEND_DIR, html=True), name="website")
 
     return app
 

@@ -23,3 +23,8 @@ dist-zips/
 .coverage
 .coverage.*
 htmlcov/
+
+# Redis snapshot files (local data, never commit)
+*.rdb
+# Python packaging metadata created by pip install -e
+*.egg-info/
