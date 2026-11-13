@@ -1,5 +1,4 @@
-# Core backend (ZIP 2)
-
+# Core backend 
 FastAPI + SQLAlchemy 2.0 (async) + Alembic + PostgreSQL 16 + Redis + ARQ. Python 3.12.
 
 ## What is implemented
